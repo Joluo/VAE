@@ -6,7 +6,7 @@ import os
 from scipy.misc import imsave
 
 
-class VAE(object):
+class CVAE(object):
     def __init__(self, sample_size, latent_size):
         self.input_ = tf.placeholder(tf.float32, shape=[None, sample_size])
         self.label = tf.placeholder(tf.float32, shape=[None, 10])
@@ -16,11 +16,7 @@ class VAE(object):
         self.latent_size = latent_size
         self.eh_dim = 128
         self.dh_dim = 128
-        print(self.input_.shape)
-        print(self.label.shape)
         self.input = tf.concat([self.input_, self.label], 1)
-        print(self.sample_size)
-        print(self.input.shape)
         z_mu, z_var = self.encoder()
         z = self.sample_z(z_mu, z_var)
         with tf.variable_scope('decoder', reuse = False):
@@ -95,14 +91,14 @@ if __name__ == '__main__':
         session_conf.gpu_options.allow_growth = True
         sess = tf.Session(config=session_conf)
         with sess.as_default(), tf.device('/gpu:1'):
-            vae = VAE(sample_size, z_dim)
+            cvae = CVAE(sample_size, z_dim)
             sess.run(tf.global_variables_initializer())
             for i in range(1000000):
                 x_mb, y_mb = mnist.train.next_batch(mb_size)
-                _, loss = sess.run([vae.train_op, vae.losses], feed_dict={vae.input_: x_mb, vae.label: y_mb})
+                _, loss = sess.run([cvae.train_op, cvae.losses], feed_dict={cvae.input_: x_mb, cvae.label: y_mb})
                 if i % 1000 == 0:
                     print('Iteration:%d, losses:%f.' % (i, loss))
                     mask = [0 for i in range(10)]
                     mask[8] = 1
-                    imgs = sess.run(vae.inference_op, feed_dict={vae.label:[mask], vae.sample_num:1})
+                    imgs = sess.run(cvae.inference_op, feed_dict={cvae.label:[mask], cvae.sample_num:1})
                     imsave(os.path.join(imgs_folder, '%d.png') % i, imgs[0].reshape(28, 28))

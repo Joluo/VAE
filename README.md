@@ -11,6 +11,7 @@ Pytorch:
     Anaconda2-4.4.0-Linux-x86_64.sh
     Pytorch Version:0.2.0_2
 
-结果示例：
+
+生成结果示例：
 
 ![](https://github.com/Joluo/VAE/blob/master/res.png)

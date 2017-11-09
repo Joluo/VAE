@@ -20,7 +20,7 @@ class Encoder(torch.nn.Module):
 
     def forward(self, x):
         return self.linear1(x)
-        #return self.relu(self.linear1(input))
+        #return self.relu(self.linear1(x))
 
 class Sampler(torch.nn.Module):
     def __init__(self, latent_size):
@@ -110,11 +110,29 @@ if __name__ == '__main__':
             l = loss.data[0]
             if i % 1000 == 0:
                 print 'Epoch:%d, iteration:%d, loss:%f' % (epoch, i, l)
-                z = torch.from_numpy(np.random.normal(0, 1, size=[1, z_dim])).float().cuda()
-                mask = [0. for j in range(10)]
-                mask[0] = 1.
-                mask = torch.from_numpy(np.asarray([mask])).float().cuda()
-                z = Variable(torch.cat((z, mask), 1), requires_grad=False).cuda()
+                z = torch.from_numpy(np.random.normal(0, 1, size=[100, z_dim])).float().cuda()
+                masks = []
+                for m in range(10):
+                    for n in range(10):
+                        mask = [0. for j in range(10)]
+                        mask[m] = 1.
+                        masks.append(mask)
+                masks = torch.from_numpy(np.asarray(masks)).float().cuda()
+                z = Variable(torch.cat((z, masks), 1), requires_grad=False).cuda()
                 imgs = decoder(z).cpu().data.numpy()
-                imsave(os.path.join(imgs_folder, '%d_%d.png') % (epoch, i), imgs[0].reshape(28, 28))
+                p_imgs = np.array([])
+                idx = 0
+                for m in range(10):
+                    tmp = np.array([])
+                    for n in range(10):
+                        if len(tmp) == 0:
+                            tmp = imgs[idx].reshape(28,28)
+                        else:
+                            tmp = np.column_stack((tmp, imgs[idx].reshape(28,28)))
+                        idx += 1
+                    if len(p_imgs) == 0:
+                        p_imgs = tmp
+                    else:
+                        p_imgs = np.row_stack((p_imgs, tmp))
+                imsave(os.path.join(imgs_folder, '%d_%d.png') % (epoch, i), p_imgs)
             

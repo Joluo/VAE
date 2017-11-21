@@ -19,5 +19,6 @@ Pytorch:
 
 References:
 
-    ICLR2014, Auto-Encoding Variational Bayes, Diederik P. Kingma
+    ICLR2014, Auto-Encoding Variational Bayes, Diederik P. Kingma
     ICML2014, Stochastic back-propagation and variational inference in deep latent Gaussian models
+

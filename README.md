@@ -15,3 +15,9 @@ Pytorch:
 生成结果示例：
 
 ![](https://github.com/Joluo/VAE/blob/master/res.png)
+
+
+References:
+
+    ICLR2014, Auto-Encoding Variational Bayes, Diederik P. Kingma
+    ICML2014, Stochastic back-propagation and variational inference in deep latent Gaussian models
